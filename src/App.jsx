@@ -1,19 +1,23 @@
-import { React, useState } from "react";
+import { React, useState, useRef, useEffect } from "react";
 import Die from "./Die";
 import { nanoid } from "nanoid";
 import Confetti from 'react-confetti'
 
 function App() {
   const [dice, setDice] = useState(() => generateAllNewDice());
+  const buttonRef = useRef(null)
 
   const gameWon = dice.every(die => die.isHeld) && 
   dice.every(die => die.value === dice[0].value)
     
-  
+  useEffect(() => {
+    if(gameWon) {
+      buttonRef.current.focus()
+    }
+  },[gameWon])
 
   //Generate a random dieObjber
   function generateAllNewDice() {
-    console.log("The generate funtions is clicked")
     return Array(10)
       .fill(0)
       .map(() => ({
@@ -67,8 +71,8 @@ function App() {
 
   return (
     <>
-      <main className="bg-main-0 h-screen flex justify-center p-32 font-">
-        {gameWon && <Confetti className="w-full" />}
+      <main className="bg-main-0 h-screen  flex justify-center p-32 font-">
+        {gameWon && <Confetti className="w-full h-screen" />}
         <div className="bg-grey-0 w-[500px] h-[480px] rounded-xl flex flex-col justify-center items-center min-w-max">
           <h1 className="text-3xl font-bold">Tenzies</h1>
           <p className="w-[340px] my-4">
@@ -76,8 +80,8 @@ function App() {
             current value between rolls.
           </p>
           <div className="grid grid-cols-5 gap-6 my-8">{diceElement}</div>
-          <button
-            className="bg-blue-500 text-white px-5 py-2 rounded-md"
+          <button ref={buttonRef}
+            className="bg-blue-700 text-white w-auto h-14 px-5 py-2 rounded-md"
             onClick={rollDice}
           >
             {gameWon ? "New Game" : "Roll"}
